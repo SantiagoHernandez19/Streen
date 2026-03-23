@@ -10,28 +10,32 @@ import {
 } from "react-router-dom";
 
 // ===== COMPONENTES PÚBLICOS =====
-import Header from "./components/Header";
-import Login from "./pages/Login";
-import Home from "./pages/Home";
-import Productos from "./pages/Productos";
-import Categorias from "./pages/Categorias";
-import Ofertas from "./pages/Ofertas";
-import Profile from "./pages/Profile";
-import Cart from "./pages/Cart";
-import SearchResults from "./pages/SearchResults";
+import Header from "./shared/components/Header";
+import Login from "./features/auth/pages/Login";
+import Home from "./features/products/pages/Home";
+import Productos from "./features/products/pages/Productos";
+import Categorias from "./features/products/pages/Categorias";
+import Ofertas from "./features/products/pages/Ofertas";
+import Profile from "./features/auth/pages/Profile";
+import Cart from "./features/cart/pages/Cart";
+import SearchResults from "./features/products/pages/SearchResults";
+import CategoriaDetalle from "./features/products/pages/CategoriaDetalle";
+import QuienesSomos from "./features/info/pages/QuienesSomos";
+import PoliticasEnvio from "./features/info/pages/PoliticasEnvio";
+import PoliticasCambios from "./features/info/pages/PoliticasCambios";
 
 // ===== COMPONENTES ADMIN =====
-import AdminLayoutClean from "./pages/admin/AdminLayoutClean";
-import AdminDashboard from "./pages/admin/AdminDashboard";
-import AdminCategorias from "./pages/admin/Categorias";
-import ClientesPage from "./pages/admin/ClientesPage";
-import ProveedoresPage from "./pages/admin/ProveedoresPage";
-import ProductosPage from "./pages/admin/Productos";
-import DevolucionesPage from "./pages/admin/DevolucionesPage";
-import RolesPage from "./pages/admin/RolesPage";
-import UsersPage from "./pages/admin/UsersPage";
-import VentasPage from "./pages/admin/VentasPage";
-import ComprasPage from "./pages/admin/ComprasPage";
+import AdminLayoutClean from "./features/admin/pages/admin/AdminLayoutClean";
+import AdminDashboard from "./features/admin/pages/admin/AdminDashboard";
+import AdminCategorias from "./features/admin/pages/admin/Categorias";
+import ClientesPage from "./features/admin/pages/admin/ClientesPage";
+import ProveedoresPage from "./features/admin/pages/admin/ProveedoresPage";
+import ProductosPage from "./features/admin/pages/admin/Productos";
+import DevolucionesPage from "./features/admin/pages/admin/DevolucionesPage";
+import RolesPage from "./features/admin/pages/admin/RolesPage";
+import UsersPage from "./features/admin/pages/admin/UsersPage";
+import VentasPage from "./features/admin/pages/admin/VentasPage";
+import ComprasPage from "./features/admin/pages/admin/ComprasPage";
 
 // ===== 🔐 PROTECTED ROUTE =====
 const ProtectedRoute = ({ user, children }) => {
@@ -39,7 +43,7 @@ const ProtectedRoute = ({ user, children }) => {
     return <Navigate to="/login" replace />;
   }
   
-  const isAdmin = user.IdRol === 1 || user.userType === "admin";
+  const isAdmin = user.userType === "admin";
   
   if (!isAdmin) {
     return <Navigate to="/" replace />;
@@ -182,12 +186,16 @@ const AppContent = () => {
         <Route path="/" element={<Home addToCart={addToCart} updateCart={updateCart} cartItems={cartItems} />} />
         <Route path="/login" element={<Login onLogin={handleLogin} />} />
         <Route path="/categorias" element={<Categorias />} />
+        <Route path="/categorias/:nombreCategoria" element={<CategoriaDetalle addToCart={addToCart} />} />
         <Route path="/ofertas" element={<Ofertas />} />
         <Route path="/productos" element={<Productos addToCart={addToCart} updateCart={updateCart} cartItems={cartItems} />} />
         <Route path="/profile" element={<Profile user={user} onLogout={() => handleLogout()} />} />
         <Route path="/perfil" element={<Profile user={user} onLogout={() => handleLogout()} />} />
         <Route path="/cart" element={<Cart cartItems={cartItems} updateCart={updateCart} user={user} onLogout={() => handleLogout()} />} />
         <Route path="/search" element={<SearchResults addToCart={addToCart} updateCart={updateCart} cartItems={cartItems} />} />
+        <Route path="/quienes-somos" element={<QuienesSomos />} />
+        <Route path="/politicas-envio" element={<PoliticasEnvio />} />
+        <Route path="/politica-devoluciones" element={<PoliticasCambios />} />
 
         {/* Rutas de admin protegidas */}
         <Route path="/admin" element={
