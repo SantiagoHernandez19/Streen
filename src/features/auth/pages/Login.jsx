@@ -231,11 +231,11 @@ const Login = ({ onLogin }) => {
                   <div style={{display: "flex", gap: "10px"}}>
                     <div style={{flex: 1}}>
                       <label style={styles.label}>Nombre</label>
-                      <input style={styles.input} type="text" placeholder="Ej: Lhucianno" required value={registerData.firstName} onChange={e => setRegisterData({...registerData, firstName: e.target.value})} />
+                      <input style={styles.input} type="text" placeholder="Tu nombre" required value={registerData.firstName} onChange={e => setRegisterData({...registerData, firstName: e.target.value})} />
                     </div>
                     <div style={{flex: 1}}>
                       <label style={styles.label}>Apellido</label>
-                      <input style={styles.input} type="text" placeholder="Ej: Alexander" required value={registerData.lastName} onChange={e => setRegisterData({...registerData, lastName: e.target.value})} />
+                      <input style={styles.input} type="text" placeholder="Tu apellido" required value={registerData.lastName} onChange={e => setRegisterData({...registerData, lastName: e.target.value})} />
                     </div>
                   </div>
                   <label style={styles.label}>Correo Electrónico</label>
