@@ -622,7 +622,7 @@ const Profile = ({ user: propUser, onLogout }) => {
                 <div style={{ display: "flex", flexDirection: "column", gap: "25px" }}>
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
                     {[
-                      { label: "Tipo de Documento", name: "documentType", value: formData.documentType, isSelect: true, options: ["Cédula de Ciudadanía", "Tarjeta de Identidad", "Cédula de Extranjería", "NIT", "Pasaporte"], disabled: !!formData.documentType },
+                      { label: "Tipo de Documento", name: "documentType", value: formData.documentType, isSelect: true, options: ["Cédula de Ciudadanía", "Permiso de Protección Temporal", "Permiso Especial de Permanencia", "Pasaporte", "NIT"], disabled: !!formData.documentType },
                       { label: "Número de Documento", name: "documentNumber", value: formData.documentNumber, disabled: !!formData.documentNumber },
                       { label: "Nombre", name: "firstName", value: formData.firstName },
                       { label: "Apellido", name: "lastName", value: formData.lastName },

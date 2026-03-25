@@ -780,10 +780,11 @@ const UsersPage = () => {
           <div style={{ display: 'flex', gap: '12px' }}>
             <div style={{ flex: 1 }}>
               {renderField('Tipo Documento', 'tipoDocumento', 'select', [
-                { value: 'CC', label: 'Cédula' },
-                { value: 'CE', label: 'Extranjería' },
-                { value: 'NIT', label: 'NIT' },
-                { value: 'Pasaporte', label: 'Pasaporte' }
+                { value: 'CC', label: 'Cédula de Ciudadanía' },
+                { value: 'PPT', label: 'Permiso de Protección Temporal' },
+                { value: 'PEP', label: 'Permiso Especial de Permanencia' },
+                { value: 'Pasaporte', label: 'Pasaporte' },
+                { value: 'NIT', label: 'NIT' }
               ])}
             </div>
             <div style={{ flex: 1 }}>

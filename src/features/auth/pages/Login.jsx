@@ -224,7 +224,13 @@ const Login = ({ onLogin }) => {
                 <form onSubmit={handleRegister}>
                   <div style={{display: "flex", gap: "12px"}}>
                     <div style={{flex: 1}}><label style={styles.label}>Documento</label>
-                      <select style={styles.input} value={registerData.documentType} onChange={e => setRegisterData({...registerData, documentType: e.target.value})}><option>Cédula</option><option>Pasaporte</option><option>NIT</option></select></div>
+                      <select style={styles.input} value={registerData.documentType} onChange={e => setRegisterData({...registerData, documentType: e.target.value})}>
+                        <option>Cédula de Ciudadanía</option>
+                        <option>Permiso de Protección Temporal</option>
+                        <option>Permiso Especial de Permanencia</option>
+                        <option>Pasaporte</option>
+                        <option>NIT</option>
+                      </select></div>
                     <div style={{flex: 1}}><label style={styles.label}>Número</label>
                       <input style={styles.input} type="text" placeholder="1234567" required value={registerData.documentNumber} onChange={e => setRegisterData({...registerData, documentNumber: e.target.value})} /></div>
                   </div>
