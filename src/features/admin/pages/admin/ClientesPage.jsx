@@ -25,7 +25,7 @@ const [modalState, setModalState] = useState({
   cliente: null
 });
 const [formData, setFormData] = useState({
-  documentType: 'Cédula de Identidad',
+    documentType: 'Cédula de Ciudadanía',
   documentNumber: '',
   fullName: '',
   email: '',
@@ -83,7 +83,7 @@ useEffect(() => {
 useEffect(() => {
   const mapped = initialCustomers.map((c, i) => ({
     id: c.Correo || `cliente-${i}`,
-    tipoDocumento: 'Cédula de Identidad',
+    tipoDocumento: 'Cédula de Ciudadanía',
     numeroDocumento: `${i + 10000000}`,
     nombreCompleto: c.Nombre,
     email: c.Correo,
@@ -172,7 +172,7 @@ const openModal = (mode = 'create', cliente = null) => {
     });
   } else {
     setFormData({
-      documentType: 'Cédula de Identidad',
+        documentType: 'Cédula de Ciudadanía',
       documentNumber: '',
       fullName: '',
       email: '',
@@ -189,7 +189,7 @@ const openModal = (mode = 'create', cliente = null) => {
 const closeModal = () => {
   setModalState({ isOpen: false, mode: 'view', cliente: null });
   setFormData({
-    documentType: 'Cédula de Identidad',
+      documentType: 'Cédula de Ciudadanía',
     documentNumber: '',
     fullName: '',
     email: '',
@@ -628,9 +628,11 @@ const ClienteFormFields = () => {
         fieldOptions = ciudades.map(c => ({ value: c.id, label: c.name }));
       } else if (fieldName === 'documentType') {
         fieldOptions = [
-          { value: 'Cédula de Identidad', label: 'Cédula de Identidad' },
+          { value: 'Cédula de Ciudadanía', label: 'Cédula de Ciudadanía' },
+          { value: 'Permiso de Protección Temporal', label: 'Permiso de Protección Temporal' },
+          { value: 'Permiso Especial de Permanencia', label: 'Permiso Especial de Permanencia' },
           { value: 'Pasaporte', label: 'Pasaporte' },
-          { value: 'RUC', label: 'RUC' },
+          { value: 'NIT', label: 'NIT' },
         ];
       }
 
