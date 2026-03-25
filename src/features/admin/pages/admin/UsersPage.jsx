@@ -155,7 +155,7 @@ const UsersPage = () => {
         nombre: '',
         apellido: '',
         email: '',
-        tipoDocumento: 'CC',
+        tipoDocumento: 'Cédula de Ciudadanía',
         numeroDocumento: '',
         rol: '',
         isActive: true
@@ -780,9 +780,9 @@ const UsersPage = () => {
           <div style={{ display: 'flex', gap: '12px' }}>
             <div style={{ flex: 1 }}>
               {renderField('Tipo Documento', 'tipoDocumento', 'select', [
-                { value: 'CC', label: 'Cédula de Ciudadanía' },
-                { value: 'PPT', label: 'Permiso de Protección Temporal' },
-                { value: 'PEP', label: 'Permiso Especial de Permanencia' },
+                { value: 'Cédula de Ciudadanía', label: 'Cédula de Ciudadanía' },
+                { value: 'Permiso de Protección Temporal', label: 'Permiso de Protección Temporal' },
+                { value: 'Permiso Especial de Permanencia', label: 'Permiso Especial de Permanencia' },
                 { value: 'Pasaporte', label: 'Pasaporte' },
                 { value: 'NIT', label: 'NIT' }
               ])}

@@ -10,7 +10,7 @@ const Login = ({ onLogin }) => {
   const [infoMsg, setInfoMsg] = useState("");
   const [loginData, setLoginData] = useState({ email: "", password: "" });
   const [registerData, setRegisterData] = useState({
-    documentType: "Cédula de Identidad",
+    documentType: "Cédula de Ciudadanía",
     documentNumber: "",
     firstName: "",
     lastName: "",
