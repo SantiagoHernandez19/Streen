@@ -16,7 +16,7 @@ const Profile = ({ user: propUser, onLogout }) => {
   const [toast, setToast] = useState({ open: false, text: "" });
   const [formData, setFormData] = useState({
     documentType: "", documentNumber: "",
-    name: "", email: "", phone: "",
+    firstName: "", lastName: "", email: "", phone: "",
     department: "", city: "", address: "",
   });
   const [showPolicyModal, setShowPolicyModal] = useState(false);
@@ -63,14 +63,15 @@ const Profile = ({ user: propUser, onLogout }) => {
     if (propUser) {
       setUser(propUser);
       setFormData({
-        documentType: propUser.DocumentoTipo || propUser.documentType || "",
-        documentNumber: propUser.DocumentoNumero || propUser.documentNumber || "",
-        name: propUser.Nombre || propUser.name || "",
-        email: propUser.Correo || propUser.email || "",
-        phone: propUser.Telefono || propUser.phone || "",
-        department: propUser.Departamento || propUser.department || "",
-        city: propUser.Ciudad || propUser.city || "",
-        address: propUser.Direccion || propUser.address || "",
+        documentType: propUser.document_type || propUser.documentType || propUser.DocumentoTipo || "",
+        documentNumber: propUser.document_number || propUser.documentNumber || propUser.DocumentoNumero || "",
+        firstName: propUser.first_name || propUser.Nombre?.split(' ')[0] || "",
+        lastName: propUser.last_name || propUser.Nombre?.split(' ').slice(1).join(' ') || "",
+        email: propUser.email || propUser.Correo || "",
+        phone: propUser.phone || propUser.phone_number || propUser.phone || propUser.Telefono || "",
+        department: propUser.department || propUser.Departamento || "",
+        city: propUser.city || propUser.Ciudad || "",
+        address: propUser.address || propUser.Direccion || "",
       });
       setAvatarUrl(propUser.avatarUrl || "");
       return;
@@ -86,14 +87,15 @@ const Profile = ({ user: propUser, onLogout }) => {
       const parsedUser = JSON.parse(savedUser);
       setUser(parsedUser);
       setFormData({
-        documentType: parsedUser.DocumentoTipo || parsedUser.documentType || "",
-        documentNumber: parsedUser.DocumentoNumero || parsedUser.documentNumber || "",
-        name: parsedUser.Nombre || parsedUser.name || "",
-        email: parsedUser.Correo || parsedUser.email || "",
-        phone: parsedUser.Telefono || parsedUser.phone || "",
-        department: parsedUser.Departamento || parsedUser.department || "",
-        city: parsedUser.Ciudad || parsedUser.city || "",
-        address: parsedUser.Direccion || parsedUser.address || "",
+        documentType: parsedUser.document_type || parsedUser.documentType || parsedUser.DocumentoTipo || "",
+        documentNumber: parsedUser.document_number || parsedUser.documentNumber || parsedUser.DocumentoNumero || "",
+        firstName: parsedUser.first_name || parsedUser.Nombre?.split(' ')[0] || "",
+        lastName: parsedUser.last_name || parsedUser.Nombre?.split(' ').slice(1).join(' ') || "",
+        email: parsedUser.email || parsedUser.Correo || "",
+        phone: parsedUser.phone || parsedUser.phone_number || parsedUser.phone || parsedUser.Telefono || "",
+        department: parsedUser.department || parsedUser.Departamento || "",
+        city: parsedUser.city || parsedUser.Ciudad || "",
+        address: parsedUser.address || parsedUser.Direccion || "",
       });
       setAvatarUrl(parsedUser.avatarUrl || "");
     } catch (error) {
@@ -124,24 +126,75 @@ const Profile = ({ user: propUser, onLogout }) => {
 
   const handleEditClick = () => setIsEditing(true);
 
-  const handleSaveClick = () => {
-    const updatedUser = {
-      ...user,
-      DocumentoTipo: formData.documentType, documentType: formData.documentType,
-      DocumentoNumero: formData.documentNumber, documentNumber: formData.documentNumber,
-      Nombre: formData.name, name: formData.name,
-      Correo: formData.email, email: formData.email,
-      Telefono: formData.phone, phone: formData.phone,
-      Departamento: formData.department, department: formData.department,
-      Ciudad: formData.city, city: formData.city,
-      Direccion: formData.address, address: formData.address,
-      avatarUrl: avatarUrl || "",
-    };
-    sessionStorage.setItem("user", JSON.stringify(updatedUser));
-    localStorage.setItem("user", JSON.stringify(updatedUser));
-    setUser(updatedUser);
-    setIsEditing(false);
-    showTopToast("Cambios guardados correctamente.");
+  const handleSaveClick = async () => {
+    try {
+      const userId = user.id || user.IdUsuario;
+      const API_URL = "https://backend-streen.onrender.com/api"; // O local si prefieres
+
+      const response = await fetch(`${API_URL}/auth/profile/${userId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("token")}`
+        },
+        body: JSON.stringify({
+          first_name: formData.firstName,
+          last_name: formData.lastName,
+          document_type: formData.documentType,
+          document_number: formData.documentNumber,
+          phone: formData.phone,
+          department: formData.department,
+          city: formData.city,
+          address: formData.address
+        })
+      });
+
+      const result = await response.json();
+
+      if (result.status === "success") {
+        const updatedUser = {
+          ...user,
+          ...result.data.user,
+          // Mantener alias para compatibilidad si es necesario
+          Nombre: result.data.user.nombre,
+          Correo: result.data.user.email,
+          DocumentoTipo: result.data.user.document_type,
+          DocumentoNumero: result.data.user.document_number,
+          Telefono: result.data.user.phone,
+          Departamento: result.data.user.department,
+          Ciudad: result.data.user.city,
+          Direccion: result.data.user.address,
+          avatarUrl: avatarUrl || "",
+        };
+        sessionStorage.setItem("user", JSON.stringify(updatedUser));
+        localStorage.setItem("user", JSON.stringify(updatedUser));
+        setUser(updatedUser);
+        setIsEditing(false);
+        showTopToast("Cambios guardados en la base de datos.");
+      } else {
+        showTopToast("Error al guardar: " + (result.message || "Error desconocido"));
+      }
+    } catch (error) {
+      console.error("Error al guardar perfil:", error);
+      showTopToast("Error de conexión al guardar.");
+      
+      // Fallback local por si acaso el backend está caído y queremos que se vea el cambio
+      const updatedUserLocal = {
+        ...user,
+        name: formData.name,
+        Nombre: formData.name,
+        email: formData.email,
+        documentType: formData.documentType,
+        documentNumber: formData.documentNumber,
+        phone: formData.phone,
+        department: formData.department,
+        city: formData.city,
+        address: formData.address,
+        avatarUrl: avatarUrl || "",
+      };
+      setUser(updatedUserLocal);
+      setIsEditing(false);
+    }
   };
 
   const handleChange = (e) => setFormData((p) => ({ ...p, [e.target.name]: e.target.value }));
@@ -569,9 +622,10 @@ const Profile = ({ user: propUser, onLogout }) => {
                 <div style={{ display: "flex", flexDirection: "column", gap: "25px" }}>
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
                     {[
-                      { label: "Tipo de Documento", name: "documentType", value: formData.documentType, isSelect: true, options: ["Cédula de Ciudadanía", "Tarjeta de Identidad", "Cédula de Extranjería", "NIT", "Pasaporte"] },
-                      { label: "Número de Documento", name: "documentNumber", value: formData.documentNumber },
-                      { label: "Nombre", name: "name", value: formData.name },
+                      { label: "Tipo de Documento", name: "documentType", value: formData.documentType, isSelect: true, options: ["Cédula de Ciudadanía", "Tarjeta de Identidad", "Cédula de Extranjería", "NIT", "Pasaporte"], disabled: !!formData.documentType },
+                      { label: "Número de Documento", name: "documentNumber", value: formData.documentNumber, disabled: !!formData.documentNumber },
+                      { label: "Nombre", name: "firstName", value: formData.firstName },
+                      { label: "Apellido", name: "lastName", value: formData.lastName },
                       { label: "Email (Cuenta)", name: "email", value: formData.email, disabled: true },
                       { label: "Teléfono", name: "phone", value: formData.phone },
                       { label: "Departamento", name: "department", value: formData.department },
@@ -585,7 +639,8 @@ const Profile = ({ user: propUser, onLogout }) => {
                             name={field.name} 
                             value={field.value} 
                             onChange={handleChange} 
-                            style={{ ...boxSearchInput, width: "100%", height: "36px" }}
+                            disabled={field.disabled}
+                            style={{ ...boxSearchInput, width: "100%", height: "36px", opacity: field.disabled ? 0.6 : 1, cursor: field.disabled ? "not-allowed" : "pointer" }}
                           >
                             <option value="">Seleccione...</option>
                             {field.options.map(opt => <option key={opt} value={opt}>{opt}</option>)}
@@ -613,7 +668,8 @@ const Profile = ({ user: propUser, onLogout }) => {
                     {[
                       { label: "Tipo de Documento", value: formData.documentType },
                       { label: "Número de Documento", value: formData.documentNumber },
-                      { label: "Nombre completo", value: formData.name },
+                      { label: "Nombre", value: formData.firstName },
+                      { label: "Apellido", value: formData.lastName },
                       { label: "Correo Electrónico", value: formData.email },
                       { label: "Teléfono", value: formData.phone },
                       { label: "Departamento", value: formData.department },

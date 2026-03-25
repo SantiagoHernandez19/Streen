@@ -2,394 +2,269 @@
 import React, { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { FaArrowLeft } from "react-icons/fa";
-import { validateCustomerCredentials, validateUserCredentials, registerCustomer, roles } from "../../../data";
 
-const Login = ({ onLogin }) => { // 👈 Recibimos onLogin como prop
-  const [view, setView] = useState("auth");
+const Login = ({ onLogin }) => {
   const [activeTab, setActiveTab] = useState("login");
+  const [view, setView] = useState("auth");
   const [error, setError] = useState("");
   const [infoMsg, setInfoMsg] = useState("");
   const [loginData, setLoginData] = useState({ email: "", password: "" });
   const [registerData, setRegisterData] = useState({
     documentType: "Cédula de Identidad",
     documentNumber: "",
-    name: "",
+    firstName: "",
+    lastName: "",
     email: "",
     password: "",
     confirmPassword: ""
   });
 
-  // Recuperación
-  const [recoverMethod, setRecoverMethod] = useState("email");
-  const [recoverTo, setRecoverTo] = useState("");
-  const [sentCode, setSentCode] = useState("");
-  const [typedCode, setTypedCode] = useState("");
-  const [newPass, setNewPass] = useState("");
-  const [newPass2, setNewPass2] = useState("");
-
-  // 👁️ Toggles
   const [showLoginPass, setShowLoginPass] = useState(false);
   const [showRegPass, setShowRegPass] = useState(false);
   const [showRegPass2, setShowRegPass2] = useState(false);
-  const [showNewPass, setShowNewPass] = useState(false);
-  const [showNewPass2, setShowNewPass2] = useState(false);
 
   const resetMessages = () => { setError(""); setInfoMsg(""); };
 
-  // ===== ESTILOS =====
   const styles = useMemo(() => {
-    const inputBase = { width: "100%", padding: "8px 12px", borderRadius: "12px", backgroundColor: "#0f1b2a", border: "1px solid rgba(255,255,255,0.16)", color: "#fff", fontSize: "13px", outline: "none", boxSizing: "border-box" };
-    const tabWrap = { display: "flex", backgroundColor: "#233647", borderRadius: "16px", padding: "4px", marginBottom: "14px", gap: "6px" };
-    const tabBtn = (active) => ({ flex: 1, padding: "6px 10px", borderRadius: "14px", border: "none", fontSize: "13px", fontWeight: 500, backgroundColor: active ? "#FFC107" : "transparent", color: active ? "#000" : "#fff", cursor: "pointer", transition: "0.15s ease", lineHeight: 1.2 });
-    const pillWrap = { display: "flex", gap: "6px", backgroundColor: "#233647", padding: "4px", borderRadius: "16px", marginBottom: "12px" };
-    const pillBtn = (active) => ({ flex: 1, padding: "6px 10px", borderRadius: "14px", border: "none", fontSize: "12px", fontWeight: 500, backgroundColor: active ? "#FFC107" : "transparent", color: active ? "#000" : "#fff", cursor: "pointer" });
-    const mainBtn = { width: "100%", padding: "9px 12px", borderRadius: "12px", fontWeight: 500, fontSize: "14px", border: "none", cursor: "pointer", backgroundColor: "#FFC107", color: "#000" };
-    const secondaryBtn = { width: "100%", padding: "9px 12px", borderRadius: "12px", fontWeight: 500, fontSize: "13px", border: "1px solid rgba(255,255,255,0.18)", cursor: "pointer", backgroundColor: "transparent", color: "#fff" };
-    const linkBtn = { background: "none", border: "none", color: "#FFC107", fontSize: "12px", cursor: "pointer", fontWeight: 500, padding: 0, textDecoration: "none" };
-    const inputWrap = { position: "relative", width: "100%" };
-    const eyeBtn = { position: "absolute", right: "10px", top: "50%", transform: "translateY(-50%)", border: "none", background: "transparent", cursor: "pointer", color: "rgba(255,255,255,0.75)", fontSize: "14px", padding: "4px", lineHeight: 1 };
-
     return {
-      page: { minHeight: "100vh", background: "#a9a9a9", display: "flex", justifyContent: "center", alignItems: "center", padding: "18px", position: "relative" },
-      card: { width: "100%", maxWidth: "400px", padding: "18px", backgroundColor: "#0f1115", borderRadius: "18px", border: "1px solid rgba(255,255,255,0.10)" },
-      brand: { textAlign: "center", marginBottom: "10px" },
-      brandTitle: { color: "#FFC107", margin: 0, fontWeight: 700, fontSize: "24px", letterSpacing: "0.6px" },
-      subtitle: { color: "#cfcfcf", fontSize: "13px", margin: "8px 0 0 0", lineHeight: 1.25, fontWeight: 400 },
-      tabWrap, tabBtn, pillWrap, pillBtn,
-      label: { fontSize: "12px", color: "#ddd", marginBottom: "6px", display: "block", fontWeight: 400 },
-      input: inputBase, select: { ...inputBase, cursor: "pointer" }, inputWrap, eyeBtn,
-      mainBtn, secondaryBtn, linkBtn,
-      error: { backgroundColor: "#2b1414", padding: "10px 12px", borderRadius: "10px", fontSize: "12px", color: "#ff6b6b", marginBottom: "10px", border: "1px solid rgba(255,107,107,0.25)", textAlign: "center", fontWeight: 400 },
-      info: { backgroundColor: "rgba(255,193,7,0.10)", padding: "10px 12px", borderRadius: "10px", fontSize: "12px", color: "#ffd56a", marginBottom: "10px", border: "1px solid rgba(255,193,7,0.20)", textAlign: "center", fontWeight: 400 },
-      mutedText: { marginTop: "10px", textAlign: "center", color: "rgba(255,255,255,0.55)", fontSize: "11px", fontWeight: 400 },
-      backLink: { position: "absolute", top: "18px", left: "20px", display: "flex", alignItems: "center", gap: "7px", color: "#000", textDecoration: "none", fontSize: "13px", fontWeight: 500, transition: "0.2s ease" },
-      row2: { display: "flex", gap: "12px", flexWrap: "wrap" },
-      colHalf: { flex: "1 1 160px", minWidth: "160px" },
-      rowButtons: { display: "flex", gap: "10px", marginTop: "10px" },
-      colBtn: { flex: 1 }
+      container: {
+        display: "flex",
+        height: "100vh",
+        width: "100%",
+        backgroundImage: `url('https://res.cloudinary.com/dxc5qqsjd/image/upload/v1774320932/WhatsApp_Image_2026-03-23_at_9.54.36_PM_pxd6fe.jpg')`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        fontFamily: "'Inter', sans-serif",
+        color: "#fff",
+        overflow: "hidden",
+        position: "relative"
+      },
+      overlay: {
+        position: "absolute",
+        top: 0, left: 0, right: 0, bottom: 0,
+        background: "linear-gradient(to right, rgba(0,0,0,0.85), rgba(0,0,0,0.2))",
+        zIndex: 1
+      },
+      // --- Lado Izquierdo (Hero) ---
+      heroSection: {
+        flex: "0 0 45%",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        textAlign: "center",
+        zIndex: 2,
+        padding: "40px",
+        animation: "fadeIn 1s ease"
+      },
+      logoImg: {
+        width: "240px",
+        height: "auto",
+        marginBottom: "15px",
+        filter: "drop-shadow(0 4px 15px rgba(0,0,0,0.6))"
+      },
+      bannerTitle: {
+        fontSize: "26px",
+        fontWeight: "800",
+        color: "#FFC107",
+        letterSpacing: "1px",
+        margin: "0",
+        textShadow: "0 2px 10px rgba(0,0,0,0.8)"
+      },
+      bannerSubtitle: {
+        fontSize: "17px",
+        color: "#fff",
+        maxWidth: "360px",
+        marginTop: "15px",
+        lineHeight: "1.4",
+        textShadow: "0 2px 8px rgba(0,0,0,0.8)"
+      },
+      // --- Lado Derecho (Formulario Flotante) ---
+      formWrapper: {
+        flex: "0 0 55%",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center", // Mantenemos la posición base centrada en el área derecha
+        zIndex: 2,
+        paddingRight: "40px",
+        position: "relative"
+      },
+      backLink: { 
+        position: "absolute",
+        top: "30px",
+        right: "40px",
+        display: "flex", 
+        alignItems: "center", 
+        gap: "8px", 
+        color: "#fff", 
+        textDecoration: "none", 
+        fontSize: "13px", 
+        opacity: 0.7,
+        transition: "0.2s",
+        zIndex: 10
+      },
+      formCard: {
+        width: "100%",
+        maxWidth: "520px", // Más ancho como pediste, sin cambiar su centro
+        backgroundColor: "rgba(15,17,21,0.96)",
+        padding: "35px 45px",
+        borderRadius: "24px",
+        border: "1px solid rgba(255,193,7,0.15)",
+        boxShadow: "0 20px 50px rgba(0,0,0,0.8)",
+        animation: "slideInRight 0.8s ease"
+      },
+      tabWrapper: { display: "flex", backgroundColor: "#1e222a", padding: "4px", borderRadius: "14px", marginBottom: "20px", gap: "4px" },
+      tabBtn: (active) => ({ flex: 1, padding: "11px", borderRadius: "10px", border: "none", fontSize: "14px", fontWeight: "700", cursor: "pointer", transition: "0.3s", backgroundColor: active ? "#FFC107" : "transparent", color: active ? "#000" : "#fff" }),
+      formTitle: { fontSize: "28px", fontWeight: "800", marginBottom: "5px" },
+      formSubtitle: { fontSize: "14px", color: "#888", marginBottom: "25px" },
+      label: { display: "block", fontSize: "11px", color: "#aaa", marginBottom: "7px", textTransform: "uppercase", letterSpacing: "0.5px" },
+      input: { width: "100%", padding: "13px 18px", borderRadius: "12px", backgroundColor: "#171a21", border: "1px solid rgba(255,255,255,0.1)", color: "#fff", fontSize: "15px", outline: "none", marginBottom: "16px" },
+      inputWrap: { position: "relative", width: "100%" },
+      eyeBtn: { position: "absolute", right: "14px", top: "50%", transform: "translateY(-50%)", border: "none", background: "none", cursor: "pointer", color: "#666" },
+      mainBtn: { width: "100%", padding: "16px", borderRadius: "12px", backgroundColor: "#FFC107", color: "#000", border: "none", fontSize: "16px", fontWeight: "800", cursor: "pointer", marginTop: "10px", transition: "0.3s" },
+      error: { backgroundColor: "rgba(255,107,107,0.1)", color: "#ff6b6b", padding: "13px", borderRadius: "12px", fontSize: "13px", marginBottom: "20px", border: "1px solid rgba(255,107,107,0.2)" },
+      info: { backgroundColor: "rgba(255,193,7,0.1)", color: "#FFC107", padding: "13px", borderRadius: "12px", fontSize: "13px", marginBottom: "20px", border: "1px solid rgba(255,193,7,0.2)" }
     };
   }, []);
 
-  // ===== HANDLE LOGIN CORREGIDO =====
   const handleLogin = async (e) => {
     e.preventDefault();
     resetMessages();
-    const cleanEmail = loginData.email.trim().toLowerCase();
-    const cleanPassword = loginData.password.trim();
-
     try {
       const response = await fetch("https://backend-streen.onrender.com/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: cleanEmail, password: cleanPassword })
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: loginData.email.toLowerCase(), password: loginData.password })
       });
-
       const result = await response.json();
-
       if (result.status === "success") {
         const { user, token } = result.data;
-        console.log("Usuario logueado:", user); // 👈 Veamos qué dice aquí
-        
-        // Mapeamos para que App.jsx lo entienda (usando los nombres que ya tiene el proyecto)
         const userData = {
-          IdUsuario: user.id,
-          Nombre: user.nombre || `${user.first_name} ${user.last_name}`,
-          Correo: user.email,
-          IdRol: user.id_rol,
-          Rol: user.rol,
-          Permissions: user.permissions || [],
-          token: token,
-          // Un usuario es admin si tiene IdRol = 1 o si tiene el permiso "dashboard"
-          userType: (user.id_rol === 1 || (user.permissions && user.permissions.some(p => p.toLowerCase() === "dashboard"))) ? "admin" : "cliente"
+          IdUsuario: user.id, 
+          Nombre: user.nombre || `${user.first_name} ${user.last_name}`, 
+          Correo: user.email, 
+          IdRol: user.id_rol, 
+          Rol: user.rol, 
+          Permissions: user.permissions || [], 
+          token: token, 
+          userType: (user.id_rol === 1 || (user.permissions && user.permissions.some(p => p.toLowerCase() === "dashboard"))) ? "admin" : "cliente",
+          document_type: user.document_type,
+          document_number: user.document_number,
+          phone: user.phone,
+          department: user.department,
+          city: user.city,
+          address: user.address
         };
-
-        // Guardar token en localStorage por si acaso
-        localStorage.setItem("token", token);
-        
-        onLogin(userData); // Este onLogin de App.jsx hará el navigate
-      } else {
-        setError(result.message || "Credenciales incorrectas");
-      }
-    } catch (err) {
-      console.error("Error en login:", err);
-      setError("No se pudo conectar con el servidor. Inténtalo más tarde.");
-    }
+        localStorage.setItem("token", token); onLogin(userData);
+      } else { setError(result.message || "Credenciales incorrectas"); }
+    } catch (err) { setError("No se pudo conectar con el servidor."); }
   };
 
-  // ===== HANDLE REGISTER CONECTADO A RENDER =====
   const handleRegister = async (e) => {
     e.preventDefault();
     resetMessages();
-    
-    if (registerData.password !== registerData.confirmPassword) {
-      setError("Las claves no coinciden");
-      return;
-    }
-    
+    if (registerData.password !== registerData.confirmPassword) { setError("Las claves no coinciden"); return; }
+
     try {
       const response = await fetch("https://backend-streen.onrender.com/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          first_name: registerData.name,
-          last_name: "", // El formulario actual tiene solo "nombre completo", lo guardamos en first_name
-          email: registerData.email,
-          password: registerData.password,
-          document_type: registerData.documentType,
-          document_number: registerData.documentNumber
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          first_name: registerData.firstName, 
+          last_name: registerData.lastName, 
+          email: registerData.email, 
+          password: registerData.password, 
+          document_type: registerData.documentType, 
+          document_number: registerData.documentNumber 
         })
       });
-
       const result = await response.json();
-
-      if (result.status === "success") {
-        setInfoMsg("¡Cuenta creada con éxito! Ya puedes iniciar sesión.");
-        setActiveTab("login");
-        setRegisterData({
-          documentType: "Cédula de Identidad",
-          documentNumber: "",
-          name: "",
-          email: "",
-          password: "",
-          confirmPassword: ""
-        });
-      } else {
-        setError(result.message || "No se pudo crear la cuenta");
-      }
-    } catch (err) {
-      console.error("Error en registro:", err);
-      setError("No se pudo conectar con el servidor para registrar.");
-    }
+      if (result.status === "success") { setInfoMsg("¡Cuenta creada! Ya puedes iniciar sesión."); setActiveTab("login"); }
+      else { setError(result.message || "No se pudo crear la cuenta"); }
+    } catch (err) { setError("Error de conexión al registrar."); }
   };
 
-  // ===== RECUPERACIÓN =====
-  const goRecover = () => {
-    resetMessages();
-    setRecoverMethod("email");
-    setRecoverTo("");
-    setSentCode("");
-    setTypedCode("");
-    setNewPass("");
-    setNewPass2("");
-    setShowNewPass(false);
-    setShowNewPass2(false);
-    setView("recover");
-  };
-
-  const sendRecoveryCode = (e) => {
-    e.preventDefault();
-    resetMessages();
-    if (!recoverTo.trim()) {
-      setError(recoverMethod === "email" ? "Ingresa tu correo" : "Ingresa tu teléfono");
-      return;
-    }
-    const code = String(Math.floor(100000 + Math.random() * 900000));
-    setSentCode(code);
-    setInfoMsg(`Código enviado por ${recoverMethod.toUpperCase()} (demo).`);
-    setView("verify");
-  };
-
-  const verifyCode = (e) => {
-    e.preventDefault();
-    resetMessages();
-    if (typedCode.trim().length !== 6) {
-      setError("El código debe tener 6 dígitos");
-      return;
-    }
-    if (typedCode.trim() !== sentCode) {
-      setError("Código incorrecto");
-      return;
-    }
-    setView("reset");
-  };
-
-  const saveNewPassword = (e) => {
-    e.preventDefault();
-    resetMessages();
-    if (newPass.length < 6) {
-      setError("La clave debe tener mínimo 6 caracteres");
-      return;
-    }
-    if (newPass !== newPass2) {
-      setError("Las claves no coinciden");
-      return;
-    }
-    setInfoMsg("Clave actualizada (demo).");
-    setView("auth");
-    setActiveTab("login");
-  };
-
-  // ===== RENDER =====
   return (
-    <div style={styles.page}>
-      <Link to="/" style={styles.backLink} onMouseEnter={(e) => { e.currentTarget.style.color = "#FFC107"; e.currentTarget.style.transform = "translateX(3px)"; }} onMouseLeave={(e) => { e.currentTarget.style.color = "#000"; e.currentTarget.style.transform = "translateX(0px)"; }}>
-        <FaArrowLeft size={13} /> Volver a la tienda
+    <div style={styles.container}>
+      <div style={styles.overlay}></div>
+      <Link to="/" style={styles.backLink} onMouseEnter={e => e.target.style.opacity="1"} onMouseLeave={e => e.target.style.opacity="0.7"}>
+        <FaArrowLeft size={12} /> Volver a la tienda
       </Link>
-
-      <div style={styles.card}>
-        <div style={styles.brand}>
-          <h2 style={styles.brandTitle}>GM CAPS</h2>
-          <p style={styles.subtitle}>Bienvenido</p>
-        </div>
-
-        {error && <div style={styles.error}>{error}</div>}
-        {infoMsg && <div style={styles.info}>{infoMsg}</div>}
-
-        {view === "auth" && (
-          <>
-            <div style={styles.tabWrap}>
-              <button type="button" style={styles.tabBtn(activeTab === "login")} onClick={() => { setActiveTab("login"); resetMessages(); }}>Iniciar Sesión</button>
-              <button type="button" style={styles.tabBtn(activeTab === "register")} onClick={() => { setActiveTab("register"); resetMessages(); }}>Registrarse</button>
-            </div>
-
-            {activeTab === "login" && (
-              <form onSubmit={handleLogin}>
-                <div style={{ marginBottom: 12 }}>
-                  <label style={styles.label}>Email</label>
-                  <input 
-                    style={styles.input} 
-                    type="email" 
-                    required 
-                    placeholder="admin@mail.com" 
-                    value={loginData.email} 
-                    onChange={(e) => setLoginData({ ...loginData, email: e.target.value })} 
-                  />
-                </div>
-                <div style={{ marginBottom: 12 }}>
-                  <label style={styles.label}>Clave</label>
-                  <div style={styles.inputWrap}>
-                    <input 
-                      style={{ ...styles.input, paddingRight: "38px" }} 
-                      type={showLoginPass ? "text" : "password"} 
-                      required 
-                      placeholder="••••••••" 
-                      value={loginData.password} 
-                      onChange={(e) => setLoginData({ ...loginData, password: e.target.value })} 
-                    />
-                    <button type="button" style={styles.eyeBtn} onClick={() => setShowLoginPass((s) => !s)}>
-                      {showLoginPass ? "🙈" : "👁️"}
-                    </button>
-                  </div>
-                </div>
-                <button type="submit" style={styles.mainBtn}>Iniciar Sesión</button>
-                <div style={{ textAlign: "center", marginTop: 10 }}>
-                  <button type="button" style={styles.linkBtn} onClick={goRecover}>¿Olvidaste tu clave?</button>
-                </div>
-              </form>
-            )}
-
-            {activeTab === "register" && (
-              <form onSubmit={handleRegister}>
-                <div style={styles.row2}>
-                  <div style={styles.colHalf}>
-                    <label style={styles.label}>Tipo de Documento</label>
-                    <select style={styles.select} value={registerData.documentType} onChange={(e) => setRegisterData({ ...registerData, documentType: e.target.value })}>
-                      <option>Cédula de Identidad</option>
-                      <option>Cédula de Extranjería</option>
-                      <option>Pasaporte</option>
-                      <option>NIT</option>
-                    </select>
-                  </div>
-                  <div style={styles.colHalf}>
-                    <label style={styles.label}>Número de Documento</label>
-                    <input style={styles.input} type="text" required placeholder="123456789" value={registerData.documentNumber} onChange={(e) => setRegisterData({ ...registerData, documentNumber: e.target.value })} />
-                  </div>
-                </div>
-                <div style={{ marginTop: 12, marginBottom: 12 }}>
-                  <label style={styles.label}>Nombre Completo</label>
-                  <input style={styles.input} type="text" required placeholder="Juan Pérez" value={registerData.name} onChange={(e) => setRegisterData({ ...registerData, name: e.target.value })} />
-                </div>
-                <div style={{ marginBottom: 12 }}>
-                  <label style={styles.label}>Correo</label>
-                  <input style={styles.input} type="email" required placeholder="tu@email.com" value={registerData.email} onChange={(e) => setRegisterData({ ...registerData, email: e.target.value })} />
-                </div>
-                <div style={{ marginBottom: 12 }}>
-                  <label style={styles.label}>Clave</label>
-                  <div style={styles.inputWrap}>
-                    <input style={{ ...styles.input, paddingRight: "38px" }} type={showRegPass ? "text" : "password"} required placeholder="••••••••" value={registerData.password} onChange={(e) => setRegisterData({ ...registerData, password: e.target.value })} />
-                    <button type="button" style={styles.eyeBtn} onClick={() => setShowRegPass((s) => !s)}>{showRegPass ? "🙈" : "👁️"}</button>
-                  </div>
-                </div>
-                <div style={{ marginBottom: 12 }}>
-                  <label style={styles.label}>Confirmar Clave</label>
-                  <div style={styles.inputWrap}>
-                    <input style={{ ...styles.input, paddingRight: "38px" }} type={showRegPass2 ? "text" : "password"} required placeholder="••••••••" value={registerData.confirmPassword} onChange={(e) => setRegisterData({ ...registerData, confirmPassword: e.target.value })} />
-                    <button type="button" style={styles.eyeBtn} onClick={() => setShowRegPass2((s) => !s)}>{showRegPass2 ? "🙈" : "👁️"}</button>
-                  </div>
-                </div>
-                <button type="submit" style={styles.mainBtn}>Crear Cuenta</button>
-                <div style={styles.mutedText}>Al registrarte, aceptas nuestros términos y condiciones</div>
-              </form>
-            )}
-          </>
-        )}
-
-        {view === "recover" && (
-          <>
-            <div style={{ marginBottom: 8, color: "#fff", fontSize: 14, fontWeight: 400 }}>Recuperar clave</div>
-            <div style={{ color: "rgba(255,255,255,0.65)", fontSize: 12, marginBottom: 10 }}>Elige cómo quieres recibir el código</div>
-            <div style={styles.pillWrap}>
-              <button type="button" style={styles.pillBtn(recoverMethod === "email")} onClick={() => { setRecoverMethod("email"); setRecoverTo(""); resetMessages(); }}>Email</button>
-              <button type="button" style={styles.pillBtn(recoverMethod === "sms")} onClick={() => { setRecoverMethod("sms"); setRecoverTo(""); resetMessages(); }}>SMS</button>
-              <button type="button" style={styles.pillBtn(recoverMethod === "whatsapp")} onClick={() => { setRecoverMethod("whatsapp"); setRecoverTo(""); resetMessages(); }}>WhatsApp</button>
-            </div>
-            <form onSubmit={sendRecoveryCode}>
-              <div style={{ marginBottom: 12 }}>
-                <label style={styles.label}>{recoverMethod === "email" ? "Correo" : "Teléfono"}</label>
-                <input style={styles.input} type={recoverMethod === "email" ? "email" : "tel"} placeholder={recoverMethod === "email" ? "tu@email.com" : "3001234567"} value={recoverTo} onChange={(e) => setRecoverTo(e.target.value)} required />
-              </div>
-              <div style={styles.rowButtons}>
-                <div style={styles.colBtn}><button type="submit" style={styles.mainBtn}>Enviar código</button></div>
-                <div style={styles.colBtn}><button type="button" style={styles.secondaryBtn} onClick={() => { setView("auth"); setActiveTab("login"); resetMessages(); }}>Cancelar</button></div>
-              </div>
-            </form>
-          </>
-        )}
-
-        {view === "verify" && (
-          <>
-            <div style={{ marginBottom: 8, color: "#fff", fontSize: 14, fontWeight: 400 }}>Verificar código</div>
-            <div style={{ color: "rgba(255,255,255,0.65)", fontSize: 12, marginBottom: 10 }}>Ingresa el código de 6 dígitos</div>
-            <form onSubmit={verifyCode}>
-              <div style={{ marginBottom: 12 }}>
-                <label style={styles.label}>Código</label>
-                <input style={styles.input} inputMode="numeric" maxLength={6} placeholder="123456" value={typedCode} onChange={(e) => setTypedCode(e.target.value.replace(/\D/g, ""))} required />
-              </div>
-              <div style={styles.rowButtons}>
-                <div style={styles.colBtn}><button type="submit" style={styles.mainBtn}>Confirmar</button></div>
-                <div style={styles.colBtn}><button type="button" style={styles.secondaryBtn} onClick={() => { setView("recover"); resetMessages(); }}>Cancelar</button></div>
-              </div>
-            </form>
-          </>
-        )}
-
-        {view === "reset" && (
-          <>
-            <div style={{ marginBottom: 8, color: "#fff", fontSize: 14, fontWeight: 400 }}>Nueva clave</div>
-            <div style={{ color: "rgba(255,255,255,0.65)", fontSize: 12, marginBottom: 10 }}>Crea tu nueva clave</div>
-            <form onSubmit={saveNewPassword}>
-              <div style={{ marginBottom: 12 }}>
-                <label style={styles.label}>Nueva clave</label>
-                <div style={styles.inputWrap}>
-                  <input style={{ ...styles.input, paddingRight: "38px" }} type={showNewPass ? "text" : "password"} placeholder="••••••••" value={newPass} onChange={(e) => setNewPass(e.target.value)} required />
-                  <button type="button" style={styles.eyeBtn} onClick={() => setShowNewPass((s) => !s)}>{showNewPass ? "🙈" : "👁️"}</button>
-                </div>
-              </div>
-              <div style={{ marginBottom: 12 }}>
-                <label style={styles.label}>Confirmar clave</label>
-                <div style={styles.inputWrap}>
-                  <input style={{ ...styles.input, paddingRight: "38px" }} type={showNewPass2 ? "text" : "password"} placeholder="••••••••" value={newPass2} onChange={(e) => setNewPass2(e.target.value)} required />
-                  <button type="button" style={styles.eyeBtn} onClick={() => setShowNewPass2((s) => !s)}>{showNewPass2 ? "🙈" : "👁️"}</button>
-                </div>
-              </div>
-              <div style={styles.rowButtons}>
-                <div style={styles.colBtn}><button type="submit" style={styles.mainBtn}>Guardar</button></div>
-                <div style={styles.colBtn}><button type="button" style={styles.secondaryBtn} onClick={() => { setView("auth"); setActiveTab("login"); resetMessages(); }}>Cancelar</button></div>
-              </div>
-            </form>
-          </>
-        )}
+      <div style={styles.heroSection}>
+        <img src="/logo.png" alt="Logo" style={styles.logoImg} />
+        <h1 style={styles.bannerTitle}>Gorras Medellín Caps</h1>
+        <p style={styles.bannerSubtitle}>Exclusividad y estilo en cada prenda. Únete a la comunidad de gorras más grande de la ciudad.</p>
       </div>
+      <div style={styles.formWrapper}>
+        <div style={styles.formCard}>
+          {view === "auth" && (
+            <>
+              <h2 style={styles.formTitle}>{activeTab === "login" ? "¡Hola de nuevo!" : "Registrarse"}</h2>
+              <p style={styles.formSubtitle}>{activeTab === "login" ? "Ingresa para continuar comprando" : "Empieza tu colección de nivel ahora"}</p>
+              <div style={styles.tabWrapper}>
+                <button style={styles.tabBtn(activeTab === "login")} onClick={() => {setActiveTab("login"); resetMessages();}}>Login</button>
+                <button style={styles.tabBtn(activeTab === "register")} onClick={() => {setActiveTab("register"); resetMessages();}}>Registro</button>
+              </div>
+              {error && <div style={styles.error}>{error}</div>}
+              {infoMsg && <div style={styles.info}>{infoMsg}</div>}
+              {activeTab === "login" ? (
+                <form onSubmit={handleLogin}>
+                  <label style={styles.label}>Correo Electrónico</label>
+                  <input style={styles.input} type="email" placeholder="ejemplo@correo.com" required value={loginData.email} onChange={e => setLoginData({...loginData, email: e.target.value})} />
+                  <label style={styles.label}>Contraseña</label>
+                  <div style={styles.inputWrap}>
+                    <input style={styles.input} type={showLoginPass ? "text" : "password"} placeholder="••••••••" required value={loginData.password} onChange={e => setLoginData({...loginData, password: e.target.value})} />
+                    <button type="button" style={styles.eyeBtn} onClick={() => setShowLoginPass(!showLoginPass)}>{showLoginPass ? "🙈" : "👁️"}</button>
+                  </div>
+                  <button type="submit" style={styles.mainBtn}>Iniciar Sesión</button>
+                  <div style={{textAlign: "center", marginTop: "15px"}}>
+                    <button type="button" style={{background: "none", border: "none", color: "#FFC107", fontSize: "12px", cursor: "pointer"}} onClick={() => setView("recover")}>¿Olvidaste tu contraseña?</button>
+                  </div>
+                </form>
+              ) : (
+                <form onSubmit={handleRegister}>
+                  <div style={{display: "flex", gap: "12px"}}>
+                    <div style={{flex: 1}}><label style={styles.label}>Documento</label>
+                      <select style={styles.input} value={registerData.documentType} onChange={e => setRegisterData({...registerData, documentType: e.target.value})}><option>Cédula</option><option>Pasaporte</option><option>NIT</option></select></div>
+                    <div style={{flex: 1}}><label style={styles.label}>Número</label>
+                      <input style={styles.input} type="text" placeholder="1234567" required value={registerData.documentNumber} onChange={e => setRegisterData({...registerData, documentNumber: e.target.value})} /></div>
+                  </div>
+                  <div style={{display: "flex", gap: "10px"}}>
+                    <div style={{flex: 1}}>
+                      <label style={styles.label}>Nombre</label>
+                      <input style={styles.input} type="text" placeholder="Ej: Lhucianno" required value={registerData.firstName} onChange={e => setRegisterData({...registerData, firstName: e.target.value})} />
+                    </div>
+                    <div style={{flex: 1}}>
+                      <label style={styles.label}>Apellido</label>
+                      <input style={styles.input} type="text" placeholder="Ej: Alexander" required value={registerData.lastName} onChange={e => setRegisterData({...registerData, lastName: e.target.value})} />
+                    </div>
+                  </div>
+                  <label style={styles.label}>Correo Electrónico</label>
+                  <input style={styles.input} type="email" placeholder="tu@email.com" required value={registerData.email} onChange={e => setRegisterData({...registerData, email: e.target.value})} />
+                  <div style={{display: "flex", gap: "10px"}}>
+                    <div style={{flex: 1}}><label style={styles.label}>Clave</label>
+                      <input style={styles.input} type="password" placeholder="••••" required value={registerData.password} onChange={e => setRegisterData({...registerData, password: e.target.value})} /></div>
+                    <div style={{flex: 1}}><label style={styles.label}>Confirmar Clave</label>
+                      <input style={styles.input} type="password" placeholder="••••••••" required value={registerData.confirmPassword} onChange={e => setRegisterData({...registerData, confirmPassword: e.target.value})} /></div>
+                  </div>
+                  <button type="submit" style={styles.mainBtn}>Crear Cuenta</button>
+                </form>)}
+            </>)}
+          {view === "recover" && (
+             <div><h2 style={styles.formTitle}>Recuperar Cuenta</h2><p style={styles.formSubtitle}>Te enviaremos un código de seguridad</p>
+                <label style={styles.label}>Tu Correo</label><input style={styles.input} type="email" placeholder="usuario@correo.com" />
+                <button style={styles.mainBtn} onClick={() => setView("auth")}>Enviar Código</button>
+                <button style={{width: "100%", background: "none", border: "none", color: "#666", marginTop: "15px", cursor: "pointer", fontSize: "14px"}} onClick={() => setView("auth")}>Volver</button>
+             </div>)}
+        </div>
+      </div>
+      <style>{`
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideInRight { from { opacity: 0; transform: translateX(50px); } to { opacity: 1; transform: translateX(0); } }
+        @media (max-width: 900px) {
+          .container { flex-direction: column !important; overflow-y: auto !important; height: auto !important; }
+          .heroSection, .formWrapper { flex: none !important; width: 100% !important; padding: 40px !important; }
+        }
+      `}</style>
     </div>
   );
 };

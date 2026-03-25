@@ -412,10 +412,10 @@ export const modules = [
   { id: "productos", label: "Productos", icon: Package },
   { id: "proveedores", label: "Proveedores", icon: Truck },
   { id: "compras", label: "Compras", icon: ShoppingBag },
-  { id: "clientes", label: "Clientes", icon: UserCheck },
+  { id: "clientes", label: "Clientes (Admin)", icon: UserCheck },
   { id: "ventas", label: "Ventas", icon: TrendingUp },
   { id: "devoluciones", label: "Devoluciones", icon: RefreshCcw },
-  { id: "usuarios", label: "Usuarios", icon: Users },
+  { id: "usuarios", label: "Usuarios (Admin)", icon: Users },
   { id: "roles", label: "Roles", icon: Shield }
 ];
 
@@ -475,10 +475,10 @@ export const availablePermissions = [
   { id: 'productos', label: 'Productos', description: 'Gestionar productos' },
   { id: 'proveedores', label: 'Proveedores', description: 'Gestionar proveedores' },
   { id: 'compras', label: 'Compras', description: 'Gestionar compras' },
-  { id: 'clientes', label: 'Clientes', description: 'Gestionar clientes' },
+  { id: 'clientes', label: 'Clientes (Admin)', description: 'Gestionar clientes' },
   { id: 'ventas', label: 'Ventas', description: 'Gestionar ventas' },
   { id: 'devoluciones', label: 'Devoluciones', description: 'Gestionar devoluciones' },
-  { id: 'usuarios', label: 'Usuarios', description: 'Gestionar usuarios del sistema' },
+  { id: 'usuarios', label: 'Usuarios (Admin)', description: 'Gestionar usuarios del sistema' },
   { id: 'roles', label: 'Roles', description: 'Gestionar roles y permisos' }
 ];
 
@@ -536,10 +536,10 @@ export const getSidebarItems = () => {
     { id: 'productos', label: 'Productos', icon: Package, permission: 'productos' },
     { id: 'proveedores', label: 'Proveedores', icon: Truck, permission: 'proveedores' },
     { id: 'compras', label: 'Compras', icon: ShoppingBag, permission: 'compras' },
-    { id: 'clientes', label: 'Clientes', icon: UserCheck, permission: 'clientes' },
+    { id: 'clientes', label: 'Clientes (Admin)', icon: UserCheck, permission: 'clientes' },
     { id: 'ventas', label: 'Ventas', icon: TrendingUp, permission: 'ventas' },
     { id: 'devoluciones', label: 'Devoluciones', icon: RefreshCcw, permission: 'devoluciones' },
-    { id: 'usuarios', label: 'Usuarios', icon: Users, permission: 'usuarios' },
+    { id: 'usuarios', label: 'Usuarios (Admin)', icon: Users, permission: 'usuarios' },
     { id: 'roles', label: 'Roles', icon: Shield, permission: 'roles' }
   ];
   
